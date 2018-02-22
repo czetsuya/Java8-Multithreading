@@ -25,7 +25,7 @@ public class Main {
 		// useParallelStream(tasks);
 		// 2037
 		useCompletableFuture(tasks);
-		// useCompletableFutureWithExecutor(tasks);
+		useCompletableFutureWithExecutor(tasks);
 	}
 
 	public static void runSequentially(List<MyTask> tasks) {
@@ -50,7 +50,6 @@ public class Main {
 			try {
 				return t.calculateWithError();
 			} catch (Exception e) {
-				e.printStackTrace();
 				return null;
 			}
 		})).collect(Collectors.toList());
@@ -62,13 +61,13 @@ public class Main {
 	}
 
 	public static void useCompletableFutureWithExecutor(List<MyTask> tasks) {
+		System.out.println("Thead cout=" + Runtime.getRuntime().availableProcessors());
 		long start = System.nanoTime();
-		ExecutorService executor = Executors.newFixedThreadPool(Math.min(tasks.size(), 10));
+		ExecutorService executor = Executors.newFixedThreadPool(Math.min(tasks.size(), Runtime.getRuntime().availableProcessors()));
 		List<CompletableFuture<Integer>> futures = tasks.stream().map(t -> CompletableFuture.supplyAsync(() -> {
 			try {
 				return t.calculateWithError();
 			} catch (Exception e) {
-				e.printStackTrace();
 				return null;
 			}
 		}, executor)).collect(Collectors.toList());
